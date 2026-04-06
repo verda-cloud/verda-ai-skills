@@ -16,6 +16,8 @@ Developers and researchers using AI coding agents who have `verda` CLI installed
 
 3. **Target size: 150-200 lines** -- enough for workflows + safety rules, small enough to not explode context. If it grows beyond that, split with evidence, not speculation.
 
+4. **Rely on CLI output for GPU spec matching** (not a hardcoded GPU reference table). GPU offerings change as Verda adds new hardware, so a static table in the skill goes stale. `verda instance-types --gpu -o json` already returns all needed fields (`gpu_memory.size_in_gigabytes`, `gpu.number_of_gpus`, `model`, `manufacturer`, `price_per_hour`, `spot_price`). The skill teaches the agent to filter CLI output against user requirements (VRAM size, GPU count, model name) rather than looking up specs from an embedded table.
+
 ## Repo Structure
 
 ```
@@ -96,12 +98,11 @@ Step-by-step with decision points:
 6. verda images --type <type> -o json                   # pick OS image
 7. verda cost estimate --type <type> --os-volume <size> -o json  # estimate cost
 8. [CONFIRM WITH USER: show estimated cost, ask to proceed]
-9. verda vm create --kind <gpu|cpu> --instance-type <type> \
-     --location <loc> --os <image> --os-volume-size <size> \
-     --hostname <name> --ssh-key <key_id> -o json --wait
+9. verda vm create --instance-type <type> --location <loc> \
+     --image <image> --ssh-key <key-id> --wait -o json
 10. verda vm describe <id> -o json                      # verify running
 ```
-Notes on optional flags: `--storage-size`, `--startup-script`, `--is-spot`, `--description`
+Add `--startup-script <id>` if user has one. Use `verda vm create --help` for all available flags.
 
 #### 5. VM Lifecycle (~15 lines)
 ```
