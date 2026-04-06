@@ -24,7 +24,7 @@ cp skills/verda-cloud.md ~/.claude/skills/
 - GPU spec matching -- finds instances by VRAM, GPU model, or workload requirements
 - Cost awareness -- surfaces pricing and running costs before provisioning
 - VM lifecycle -- create, start, stop, restart, and destroy instances
-- Volume management -- create, attach, detach, and resize persistent storage
+- Volume management -- create, attach, detach, and trash persistent storage
 - SSH access -- connect to instances with port forwarding for notebooks and services
 
 ## Example prompts

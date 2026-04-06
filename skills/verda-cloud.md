@@ -10,7 +10,7 @@ description: Use when the user wants to manage Verda Cloud infrastructure -- dep
 Before running any verda commands:
 
 1. Check CLI is installed: `which verda` -- if missing, tell user to install it
-2. Check authentication: `verda auth show -o json` -- if not logged in, run `verda auth login`
+2. Check authentication: `verda auth show -o json` -- if not logged in, tell the user to run `verda auth login` themselves (this is an interactive browser flow)
 3. For any command you haven't used before, run `verda <command> --help` to discover exact flags
 
 ## Safety Rules
