@@ -17,7 +17,7 @@ Before running any verda commands:
 
 Follow these rules for EVERY interaction:
 
-- **Always use `-o json`** on all commands -- parse structured output, never scrape tables
+- **Always use `-o json`** on all commands -- parse structured output, never scrape tables (exception: `verda ssh` which is interactive)
 - **Always use `--wait`** on create/action commands -- wait for operation to complete before proceeding
 - **Cost before create** -- run `verda cost estimate` and `verda cost balance -o json` before creating any resource; show the user the hourly cost and their remaining balance
 - **Confirm before destroy** -- always ask the user for explicit confirmation before running delete, force_shutdown, or trash actions
@@ -77,7 +77,7 @@ verda ssh-key list -o json
 ```
 If no keys exist, ask user to provide a public key and add it:
 ```
-verda ssh-key add --name <name> --public-key "<key>"
+verda ssh-key add --name <name> --public-key "<key>" -o json
 ```
 
 ### Step 4: Check cost and balance
@@ -107,15 +107,15 @@ verda ssh <hostname-or-id>        # Connect when ready
 ```
 verda vm list -o json                          # List all VMs
 verda vm describe <id> -o json                 # Full details of a VM
-verda vm action <id> --action start --wait     # Start a stopped VM
-verda vm action <id> --action shutdown --wait  # Graceful shutdown
-verda vm action <id> --action hibernate --wait # Hibernate (preserves state)
+verda vm action <id> --action start --wait -o json     # Start a stopped VM
+verda vm action <id> --action shutdown --wait -o json  # Graceful shutdown
+verda vm action <id> --action hibernate --wait -o json # Hibernate (preserves state)
 ```
 
 For destructive actions -- confirm with user first:
 ```
-verda vm action <id> --action force_shutdown --wait
-verda vm action <id> --action delete --wait
+verda vm action <id> --action force_shutdown --wait -o json
+verda vm action <id> --action delete --wait -o json
 ```
 
 ## Cost Management
@@ -143,13 +143,13 @@ Use `verda ssh --help` for additional options.
 ```
 verda volume list -o json                                                    # List all volumes
 verda volume create --size <gb> --location <loc> --wait -o json              # Create a volume
-verda volume action <id> --action attach --vm <vm-id> --wait                 # Attach to VM
-verda volume action <id> --action detach --wait                              # Detach from VM
+verda volume action <id> --action attach --vm <vm-id> --wait -o json         # Attach to VM
+verda volume action <id> --action detach --wait -o json                      # Detach from VM
 ```
 
 For destructive actions -- confirm with user first:
 ```
-verda volume trash <id> --wait    # Move volume to trash
+verda volume trash <id> --wait -o json    # Move volume to trash
 ```
 
 Use `verda volume create --help` and `verda volume action --help` for all flags.
@@ -158,10 +158,10 @@ Use `verda volume create --help` and `verda volume action --help` for all flags.
 
 ```
 verda ssh-key list -o json                                    # List registered keys
-verda ssh-key add --name <name> --public-key "<key>"          # Add a new key
-verda ssh-key delete <id>                                     # Remove a key (confirm first)
+verda ssh-key add --name <name> --public-key "<key>" -o json   # Add a new key
+verda ssh-key delete <id> -o json                              # Remove a key (confirm first)
 
-verda startup-script list -o json                             # List saved scripts
-verda startup-script add --name <name> --script "<script>"    # Add a new script
-verda startup-script delete <id>                              # Remove a script (confirm first)
+verda startup-script list -o json                              # List saved scripts
+verda startup-script add --name <name> --script "<script>" -o json  # Add a new script
+verda startup-script delete <id> -o json                       # Remove a script (confirm first)
 ```
