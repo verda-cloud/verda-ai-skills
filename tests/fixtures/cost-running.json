@@ -1,0 +1,6 @@
+{
+  "total_hourly": 1.52,
+  "instances": [
+    {"hostname": "gpu-runner", "instance_type": "1V100.6V", "hourly": 1.52}
+  ]
+}

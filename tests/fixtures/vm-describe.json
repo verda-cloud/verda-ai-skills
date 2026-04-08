@@ -1,0 +1,13 @@
+{
+  "id": "inst-abc123",
+  "hostname": "gpu-runner",
+  "status": "running",
+  "instance_type": "1V100.6V",
+  "location": "FIN-01",
+  "ip_addresses": [{"address": "203.0.113.10", "type": "public"}],
+  "volumes": [
+    {"id": "vol-os1", "name": "gpu-runner-os", "size_gb": 50, "type": "NVMe", "role": "os"}
+  ],
+  "ssh_keys": [{"id": "sk-abc123", "name": "my-laptop"}],
+  "created_at": "2026-04-08T10:00:00Z"
+}

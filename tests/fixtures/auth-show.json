@@ -1,0 +1,5 @@
+{
+  "profile": "default",
+  "base_url": "https://api.verda.com/v1",
+  "authenticated": true
+}

@@ -1,0 +1,6 @@
+[
+  {"location_code": "FIN-01", "instance_type": "1V100.6V", "available": true},
+  {"location_code": "FIN-01", "instance_type": "1A100.10V", "available": true},
+  {"location_code": "FIN-03", "instance_type": "1A100.10V", "available": true},
+  {"location_code": "FIN-01", "instance_type": "CPU.4V.16G", "available": true}
+]

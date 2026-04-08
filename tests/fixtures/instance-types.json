@@ -1,0 +1,31 @@
+[
+  {
+    "name": "1V100.6V",
+    "kind": "gpu",
+    "price_per_hour": 1.50,
+    "spot_price": 0.90,
+    "gpu": {"number_of_gpus": 1, "model": "V100", "manufacturer": "NVIDIA"},
+    "gpu_memory": {"size_in_gigabytes": 16},
+    "memory": {"size_in_gigabytes": 24},
+    "cpu": {"number_of_cores": 6}
+  },
+  {
+    "name": "1A100.10V",
+    "kind": "gpu",
+    "price_per_hour": 3.50,
+    "spot_price": 2.10,
+    "gpu": {"number_of_gpus": 1, "model": "A100", "manufacturer": "NVIDIA"},
+    "gpu_memory": {"size_in_gigabytes": 80},
+    "memory": {"size_in_gigabytes": 64},
+    "cpu": {"number_of_cores": 10}
+  },
+  {
+    "name": "CPU.4V.16G",
+    "kind": "cpu",
+    "price_per_hour": 0.20,
+    "gpu": null,
+    "gpu_memory": null,
+    "memory": {"size_in_gigabytes": 16},
+    "cpu": {"number_of_cores": 4}
+  }
+]

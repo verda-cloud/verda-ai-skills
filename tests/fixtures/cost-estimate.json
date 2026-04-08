@@ -1,0 +1,7 @@
+{
+  "total_hourly": 3.52,
+  "breakdown": [
+    {"item": "compute", "hourly": 3.50},
+    {"item": "os_volume", "hourly": 0.02}
+  ]
+}

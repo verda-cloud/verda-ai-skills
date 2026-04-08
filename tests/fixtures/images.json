@@ -1,0 +1,5 @@
+[
+  {"slug": "ubuntu-24.04", "name": "Ubuntu 24.04 LTS", "category": "ubuntu"},
+  {"slug": "ubuntu-24.04-cuda-13.0-open-docker", "name": "Ubuntu 24.04 + CUDA 13.0 + Docker", "category": "ubuntu"},
+  {"slug": "pytorch-2.5-ubuntu-24.04", "name": "PyTorch 2.5 on Ubuntu 24.04", "category": "pytorch"}
+]

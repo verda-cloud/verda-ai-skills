@@ -1,0 +1,18 @@
+[
+  {
+    "id": "inst-abc123",
+    "hostname": "gpu-runner",
+    "status": "running",
+    "instance_type": "1V100.6V",
+    "location": "FIN-01",
+    "ip_addresses": [{"address": "203.0.113.10", "type": "public"}]
+  },
+  {
+    "id": "inst-def456",
+    "hostname": "training-box",
+    "status": "offline",
+    "instance_type": "1A100.10V",
+    "location": "FIN-01",
+    "ip_addresses": [{"address": "203.0.113.20", "type": "public"}]
+  }
+]

@@ -1,0 +1,4 @@
+[
+  {"id": "vol-os1", "name": "gpu-runner-os", "size_gb": 50, "type": "NVMe", "status": "attached", "instance_id": "inst-abc123"},
+  {"id": "vol-data1", "name": "training-data", "size_gb": 200, "type": "NVMe", "status": "detached", "instance_id": null}
+]
