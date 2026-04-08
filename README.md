@@ -1,49 +1,71 @@
 # verda-ai-skills
 
-## What is this
-
-A skill file that teaches AI coding agents (Claude Code, Cursor, Codex, Gemini) how to use the `verda` CLI to manage Verda Cloud infrastructure -- deploy GPU/CPU VMs, manage volumes, check costs, and SSH into instances. Install the skill and your agent gains structured knowledge of Verda Cloud workflows without you having to explain them each time.
+Teach AI coding agents how to manage Verda Cloud infrastructure through the `verda` CLI. Install the skills and your agent gains structured knowledge of deployment workflows, cost management, and troubleshooting — without you explaining them each time.
 
 ## Install
 
-Run the install script:
+### Quick install (auto-detects your agent)
 
-```
+```bash
+git clone https://github.com/verda-cloud/verda-ai-skills.git
+cd verda-ai-skills
 ./install.sh
 ```
 
-Or manually copy the skill file:
+### Manual install by agent
 
+**Claude Code:**
+```bash
+cp skills/*.md ~/.claude/skills/
 ```
-cp skills/verda-cloud.md ~/.claude/skills/
+
+**Cursor:**
+```bash
+mkdir -p .cursor/rules
+cp skills/*.md .cursor/rules/
 ```
 
-## What it does
+**Codex:**
+```bash
+# Append skill content to your project's AGENTS.md
+cat skills/verda-cloud.md >> AGENTS.md
+cat skills/verda-commands.md >> AGENTS.md
+```
 
-- Safety-first workflows -- confirms destructive actions before executing
-- GPU spec matching -- finds instances by VRAM, GPU model, or workload requirements
-- Cost awareness -- surfaces pricing and running costs before provisioning
-- VM lifecycle -- create, start, stop, restart, and destroy instances
-- Volume management -- create, attach, detach, and trash persistent storage
-- SSH access -- connect to instances with port forwarding for notebooks and services
-
-## Example prompts
-
-Try these with your AI agent after installing the skill:
-
-- "Deploy a GPU VM with at least 80GB VRAM"
-- "Show me my running costs"
-- "List available GPU instances and their specs"
-- "SSH into my VM and set up port forwarding for Jupyter"
+**Gemini CLI:**
+```bash
+# Copy to project root
+cp skills/verda-cloud.md GEMINI.md
+```
 
 ## Requirements
 
-- `verda` CLI installed and authenticated:
+- `verda` CLI installed: `brew install verda-cloud/tap/verda-cli`
+- Authenticated: `verda auth login`
 
-  ```
-  verda auth login
-  ```
+## What's included
+
+| File | Purpose | Size |
+|------|---------|------|
+| `verda-cloud.md` | Decision engine — teaches agents HOW to reason about tasks | ~150 lines |
+| `verda-commands.md` | Command reference — teaches agents WHAT to run and where values come from | ~130 lines |
+
+### Skills teach agents to:
+
+- **Classify requests** — distinguish explore vs deploy vs manage vs troubleshoot
+- **Follow the dependency chain** — billing → compute → instance type → location → image → keys → cost → confirm
+- **Handle errors** — parse structured `--agent` mode errors and recover automatically
+- **Be efficient** — parallel fetches, cache within conversation, skip unnecessary steps
+- **Stay safe** — cost checks before creation, confirmation before destruction
+
+## Example prompts
+
+- "Deploy a GPU VM with at least 80GB VRAM for training"
+- "What's the cheapest GPU I can get right now?"
+- "Show me my running costs and suggest ways to save"
+- "SSH into my training box and set up Jupyter port forwarding"
+- "Shut down all my VMs that aren't running anything"
 
 ## Supported agents
 
-Claude Code, Cursor, Codex, Gemini -- any agent that reads markdown skill files.
+Claude Code, Cursor, Codex, Gemini CLI — any agent that reads markdown skill files.
