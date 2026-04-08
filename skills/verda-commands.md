@@ -17,7 +17,7 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 | "ssh key", "sshkey", "SSH keys", "my keys" | `ssh-key` |
 | "startup script", "init script", "boot script" | `startup-script` |
 | "instance types", "GPU types", "machine types" | `instance-types` |
-| "images", "OS", "operating system" | `images` (no subcommand — NOT `images list`) |
+| "images", "OS", "operating system" | `images` (NOT `images list`) with `--type` (NOT `--instance-type`) |
 | "what's available", "stock", "capacity" | `availability` or `vm availability` |
 | "pricing", "plans", "how much" | `instance-types` (has pricing) or `cost estimate` |
 
@@ -36,7 +36,7 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 | `verda locations -o json` | List datacenters | — | `code`, `city`, `country` |
 | `verda instance-types -o json` | Specs + pricing | `--gpu`, `--cpu`, `--spot` | `name`, `price_per_hour`, `spot_price`, `gpu.number_of_gpus`, `gpu_memory.size_in_gigabytes`, `memory.size_in_gigabytes`, `cpu.number_of_cores` |
 | `verda availability -o json` | Stock by location/type | `--type`, `--location`, `--spot` | `location_code`, `available` |
-| `verda images -o json` | OS images | `--type <instance-type>` | `slug` (use in --os), `name`, `category` |
+| `verda images -o json` | OS images (NOT `images list` — no subcommand) | `--type` (NOT `--instance-type`) | `slug` (use in --os), `name`, `category` |
 
 ## VM Create
 
