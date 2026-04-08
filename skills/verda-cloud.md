@@ -1,167 +1,128 @@
 ---
 name: verda-cloud
-description: Use when the user wants to manage Verda Cloud infrastructure -- deploy VMs, check costs, manage volumes, SSH into instances, or manage SSH keys and startup scripts
+description: Use when the user mentions Verda Cloud, GPU/CPU VMs, cloud instances, deploying servers, ML training infrastructure, cloud costs/billing, SSH into remote machines, or verda CLI commands.
 ---
 
-# Verda Cloud Infrastructure Management
+# Verda Cloud
 
 ## Prerequisites
 
-Before running any verda commands:
-
-1. Check CLI is installed: `which verda` -- if missing, tell user to install it
-2. Check authentication: `verda auth show -o json` -- if not logged in, tell the user to run `verda auth login` themselves (this is an interactive browser flow)
-3. For any command you haven't used before, run `verda <command> --help` to discover exact flags
+1. Check CLI: `which verda` — if missing, install:
+   `brew install verda-cloud/tap/verda-cli` or `curl -sSL https://raw.githubusercontent.com/verda-cloud/verda-cli/main/scripts/install.sh | sh`
+2. Check auth: `verda auth show -o json` — if error, tell user: `verda auth login` (interactive browser flow, user must run it themselves)
+3. Always use `--agent` flag for non-interactive mode — returns structured JSON errors on stderr
+4. Always use `-o json` on all commands — parse structured output, never scrape tables
 
 ## Safety Rules
 
-Follow these rules for EVERY interaction:
+- **Cost before create** — always run cost estimate + balance check before creating any resource
+- **Confirm before destroy** — ask user for explicit confirmation before delete, force_shutdown, or trash
+- **Discovery before action** — check what's available before creating; never guess or hardcode values
+- **Show pricing** — always include price_per_hour when presenting instance options
+- **One at a time** — create one VM or volume at a time unless user explicitly requests batch
 
-- **Always use `-o json`** on all commands -- parse structured output, never scrape tables (exception: `verda ssh` which is interactive)
-- **Always use `--wait`** on create/action commands -- wait for operation to complete before proceeding
-- **Cost before create** -- run `verda cost estimate` and `verda cost balance -o json` before creating any resource; show the user the hourly cost and their remaining balance
-- **Confirm before destroy** -- always ask the user for explicit confirmation before running delete, force_shutdown, or trash actions
-- **Discovery before action** -- list available locations, instance types, and images before creating resources; never guess or hardcode values
-- **One resource at a time** -- create one VM or volume at a time unless user explicitly requests batch operations
-- **Show pricing** -- always include `price_per_hour` (and `spot_price` if available) when presenting instance type options
-- **Check running costs** -- use `verda cost running -o json` to show the user what they're already spending before adding new resources
+## Classify the Request
 
-## Discovery Commands
+Before acting, determine what the user needs:
 
-Run these to understand what's available before creating anything:
+| Type | Signal | Approach |
+|------|--------|----------|
+| **Explore** | "what's available", "show me", "how much" | Run discovery/cost commands, present results, stop |
+| **Deploy** | "create", "deploy", "spin up", "launch" | Full deploy workflow with safety checks |
+| **Manage** | "start", "stop", "delete", "SSH" | Identify target VM first, then act |
+| **Troubleshoot** | "not working", "can't connect", "error" | Gather state (describe, status), then diagnose |
 
-```
-verda locations -o json              # Available regions/datacenters
-verda instance-types -o json         # All instance types with pricing
-verda instance-types --gpu -o json   # GPU instance types only
-verda availability -o json           # What's currently available to deploy
-verda images -o json                 # OS images (Ubuntu, etc.)
-verda ssh-key list -o json           # User's registered SSH keys
-verda startup-script list -o json    # User's saved startup scripts
-```
+Don't create resources when user is just exploring. Don't run full discovery when user knows exactly what they want.
 
-For detailed flags on any command: `verda <command> --help`
+## Deploy Decision Framework
 
-## GPU Spec Matching
+When creating a VM, walk this dependency chain. Skip steps the user already answered.
 
-When the user requests specific GPU requirements (VRAM, model, count):
+### 1. Billing → spot or on-demand?
+- User says "cheap", "testing", "interruptible" → suggest **spot**
+- User says "production", "stable", "long-running" → **on-demand**
+- If on-demand and user wants discount → check long-term contracts
 
-1. Run `verda instance-types --gpu -o json`
-2. Filter results by the user's requirements using these fields:
-   - `gpu_memory.size_in_gigabytes` -- matches VRAM requirement
-   - `gpu.number_of_gpus` -- matches GPU count requirement
-   - `model` -- matches GPU model (e.g. "GB300", "H100")
-   - `manufacturer` -- typically "NVIDIA"
-3. Present matching options as a table showing: `instance_type`, `name`, `number_of_gpus`, `gpu_memory`, `cpu.number_of_cores`, `memory.size_in_gigabytes`, `price_per_hour`, `spot_price`
-4. Let the user choose before proceeding
+### 2. Compute → GPU or CPU?
+- ML/AI/training/inference/CUDA/rendering → **GPU**
+- Web server, API, database, dev box → **CPU**
 
-## Workflow: Deploy a VM
+### 3. Instance type → match requirements
+- Fetch: `verda --agent instance-types [--gpu|--cpu] -o json`
+- Match by user requirements: VRAM (`gpu_memory.size_in_gigabytes`), GPU count (`gpu.number_of_gpus`), GPU model, RAM, price
+- Present top 3 options sorted by price. Show: name, GPUs, VRAM, RAM, price/hr
 
-Follow these steps in order -- do not skip any:
+### 4. Location → where is it in stock?
+- Fetch: `verda --agent availability --type <selected> [--spot] -o json`
+- **Location depends on instance-type availability, NOT the other way around**
+- Pick cheapest available location, or respect user preference
 
-### Step 1: Gather requirements
-Ask the user what they need if not already clear: GPU vs CPU, OS preference, region preference, budget constraints.
+### 5. Image → which OS?
+- Fetch: `verda --agent images --type <instance-type> -o json`
+- GPU default: Ubuntu + CUDA. CPU default: plain Ubuntu
+- Let user choose if multiple options
 
-### Step 2: Discover options
-```
-verda locations -o json
-verda availability -o json
-verda images -o json
-```
-If GPU needed: `verda instance-types --gpu -o json` and apply GPU Spec Matching above.
-If CPU only: `verda instance-types -o json` and filter.
+### 6. SSH keys → does user have any?
+- Fetch: `verda --agent ssh-key list -o json`
+- If none: ask user for public key path or content, add with `verda --agent ssh-key add`
+- Attach all keys unless user specifies
 
-### Step 3: Check SSH keys
-```
-verda ssh-key list -o json
-```
-If no keys exist, ask user to provide a public key and add it:
-```
-verda ssh-key add --name <name> --public-key "<key>" -o json
-```
+### 7. Cost → can they afford it?
+- Fetch in parallel: `verda --agent cost balance -o json` + `verda --agent cost estimate --type <type> --os-volume 50 -o json`
+- Calculate runway: balance / total_hourly = hours
+- Warn if < 24h runway. Show: hourly cost, balance, runway
 
-### Step 4: Check cost and balance
-```
-verda cost balance -o json
-verda cost estimate --instance-type <type> --location <loc> -o json
-```
-Show the user: estimated hourly cost, their current balance, and how long the balance would last.
+### 8. Confirm → show summary, get approval
+Present: instance type, location, image, SSH keys, estimated hourly cost.
+Wait for explicit "yes" before creating.
 
-### Step 5: Confirm with user
-Present a summary: instance type, location, image, SSH key, estimated cost. Wait for explicit approval.
+### 9. Create
+`verda --agent vm create --kind <kind> --instance-type <type> --location <loc> --os <image> --hostname <name> --ssh-key <id> [--is-spot] [--os-volume-size 50] --wait -o json`
 
-### Step 6: Create the VM
-```
-verda vm create --instance-type <type> --location <loc> --image <image> --ssh-key <key-id> --wait -o json
-```
-Add `--startup-script <id>` if user has one. Use `verda vm create --help` for all available flags.
+### 10. Verify
+`verda --agent vm describe <id> -o json` — confirm status is running, get IP address.
+Offer: `verda ssh <hostname>` to connect.
 
-### Step 7: Verify and connect
-```
-verda vm describe <id> -o json    # Confirm status is running
-verda ssh <hostname-or-id>        # Connect when ready
-```
+## Spot VM Extras
 
-## VM Lifecycle
+When deploying spot instances, also handle:
+- Volume discontinue policy: recommend `keep_detached` for important data
+- Add `--os-volume-on-spot-discontinue keep_detached` to create command
+- Warn user: spot VMs can be interrupted at any time
 
-```
-verda vm list -o json                          # List all VMs
-verda vm describe <id> -o json                 # Full details of a VM
-verda vm action <id> --action start --wait -o json     # Start a stopped VM
-verda vm action <id> --action shutdown --wait -o json  # Graceful shutdown
-verda vm action <id> --action hibernate --wait -o json # Hibernate (preserves state)
-```
+## Volume Decisions
 
-For destructive actions -- confirm with user first:
-```
-verda vm action <id> --action force_shutdown --wait -o json
-verda vm action <id> --action delete --wait -o json
-```
+- **OS volume**: always created with VM, default 50 GiB
+- **Storage volume**: optional. NVMe = fast + expensive, HDD = slow + cheap
+- **Existing volumes**: can attach detached volumes (must match VM location)
+  Check: `verda --agent volume list --status detached -o json`
 
-## Cost Management
+## Efficiency Rules
 
-```
-verda cost balance -o json    # Current account balance
-verda cost estimate -o json   # Estimate cost for a new resource (use --help for flags)
-verda cost running -o json    # Total hourly cost of all running resources
-```
+- **Parallel fetches**: locations, instance-types, ssh-key list, cost balance are independent — run them together
+- **Cache in conversation**: instance-types and locations don't change mid-session — reuse previous output
+- **Skip when specific**: if user says "deploy 1V100.6V in FIN-01", skip instance-type listing — just check availability + cost
+- **Use --help once**: run `verda <cmd> --help` for flag details not covered here, remember the output
 
-Always check `balance` and `running` costs before recommending new resources. Warn the user if their balance would run out within 24 hours given current + new spend.
+## Error Recovery
 
-## SSH Access
+Handle `--agent` mode structured errors (JSON on stderr):
 
-```
-verda ssh <hostname-or-id>                              # Interactive SSH session
-verda ssh <hostname-or-id> -- -L 8080:localhost:8080    # Port forwarding
-verda ssh <hostname-or-id> -- <command>                 # Run a remote command
-```
+| Error Code | Meaning | Action |
+|------------|---------|--------|
+| `AUTH_ERROR` | Not logged in or token expired | Tell user: `verda auth login` |
+| `INSUFFICIENT_BALANCE` | Can't afford resource | Show balance, suggest spot or smaller instance |
+| `NOT_FOUND` | Resource doesn't exist | Re-fetch resource list, verify ID |
+| `MISSING_REQUIRED_FLAGS` | Command needs more flags | Read `details.missing`, provide values, retry |
+| `CONFIRMATION_REQUIRED` | Destructive action needs --yes | Confirm with user, retry with `--yes` |
+| `VALIDATION_ERROR` | Bad input value | Read `details.field` + `details.reason`, fix and retry |
+| `INTERACTIVE_PROMPT_BLOCKED` | Command tried to prompt | Read `details.choices`, pick value, pass as flag |
 
-Use `verda ssh --help` for additional options.
+## Asking Good Questions
 
-## Volume Management
+When user request is vague ("I need a GPU"):
+1. **Workload**: training, inference, fine-tuning? → determines GPU size
+2. **Model size**: parameter count → VRAM requirement (7B ≈ 16GB, 13B ≈ 24GB, 70B ≈ 80GB+)
+3. **Budget**: hourly budget constraint?
 
-```
-verda volume list -o json                                                    # List all volumes
-verda volume create --size <gb> --location <loc> --wait -o json              # Create a volume
-verda volume action <id> --action attach --vm <vm-id> --wait -o json         # Attach to VM
-verda volume action <id> --action detach --wait -o json                      # Detach from VM
-```
-
-For destructive actions -- confirm with user first:
-```
-verda volume trash <id> --wait -o json    # Move volume to trash
-```
-
-Use `verda volume create --help` and `verda volume action --help` for all flags.
-
-## SSH Key & Startup Script Management
-
-```
-verda ssh-key list -o json                                    # List registered keys
-verda ssh-key add --name <name> --public-key "<key>" -o json   # Add a new key
-verda ssh-key delete <id> -o json                              # Remove a key (confirm first)
-
-verda startup-script list -o json                              # List saved scripts
-verda startup-script add --name <name> --script "<script>" -o json  # Add a new script
-verda startup-script delete <id> -o json                       # Remove a script (confirm first)
-```
+Pick the most critical unknown and ask ONE question. Don't interrogate.
