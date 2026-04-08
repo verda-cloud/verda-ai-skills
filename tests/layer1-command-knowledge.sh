@@ -20,7 +20,7 @@ check_command() {
 check_flag() {
   local cmd="$1"
   local flag="$2"
-  if verda $cmd --help 2>&1 | grep -q -- "$flag"; then
+  if verda $cmd --help 2>&1 | grep -- "$flag" > /dev/null; then
     PASS=$((PASS + 1))
   else
     FAIL=$((FAIL + 1))
