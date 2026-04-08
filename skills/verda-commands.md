@@ -32,7 +32,7 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 | "balance", "credits", "funds", "account" | `cost balance` |
 | "running costs", "burn rate", "spending" | `cost running` |
 | "estimate", "how much will it cost" | `cost estimate` |
-| "connect", "SSH in", "log in", "remote access" | `ssh <hostname-or-id>` |
+| "connect", "SSH in", "log in", "remote access" | Tell user to run `verda ssh <hostname>` themselves (interactive — agent cannot run it) |
 | "login", "authenticate", "credentials" | `auth login` (user runs manually) |
 
 ## Auth
@@ -100,13 +100,15 @@ Note: `shutdown` alias is `stop`. `delete` alias is `rm`.
 | `verda cost estimate -o json` | Price estimate | `--type`, `--os-volume`, `--storage`, `--storage-type`, `--spot` | `total_hourly`, `breakdown[]` |
 | `verda cost running -o json` | Running instance costs | — | Per-instance breakdown, `total_hourly` |
 
-## SSH
+## SSH (Interactive — Agent Cannot Run These)
 
-| Command | Purpose |
-|---------|---------|
-| `verda ssh <hostname-or-id>` | Interactive SSH session |
-| `verda ssh <host> -- -L 8080:localhost:8080` | Port forwarding |
-| `verda ssh <host> -- <command>` | Run remote command |
+**Do NOT run these commands.** Tell the user to run them in their terminal:
+
+```
+verda ssh <hostname-or-id>                           # SSH session
+verda ssh <host> -- -L 8080:localhost:8080           # Port forwarding
+verda ssh <host> -- <command>                        # Remote command
+```
 
 Flags: `--user` (default: root), `--key` (identity file path)
 

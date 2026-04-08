@@ -102,7 +102,7 @@ If timeout reached, the VM is still provisioning — show what you have and chec
 
 ### 10. Verify
 `verda --agent vm describe <id> -o json` — confirm status is running, get IP.
-Offer: `verda ssh <hostname>` to connect.
+Tell user to connect: `verda ssh <hostname>` (interactive — do NOT run it yourself).
 
 ## Spot VM Extras
 
