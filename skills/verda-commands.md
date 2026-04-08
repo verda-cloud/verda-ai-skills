@@ -14,13 +14,13 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 
 | User says | CLI command |
 |-----------|------------|
-| "deploy", "create VM", "spin up", "launch" | `vm create` |
-| "my VMs", "list instances", "running machines" | `vm list` |
-| "VM info", "describe instance", "show VM" | `vm describe <id>` |
+| "deploy", "create VM", "create instance", "spin up", "launch" | `vm create` |
+| "my VMs", "my instances", "list instances", "running machines" | `vm list` |
+| "VM info", "instance info", "describe instance", "show VM" | `vm describe <id>` |
 | "start", "boot", "power on" | `vm start <id>` |
 | "stop", "shut down", "power off" | `vm shutdown <id>` (alias: `vm stop`) |
 | "hibernate", "suspend", "sleep" | `vm hibernate <id>` |
-| "delete VM", "remove VM", "destroy" | `vm delete <id>` (alias: `vm rm`) |
+| "delete VM", "delete instance", "remove", "destroy", "terminate" | `vm delete <id>` (alias: `vm rm`) |
 | "what's available", "stock", "capacity" | `availability` or `vm availability` |
 | "instance types", "GPU types", "machine types", "specs" | `instance-types` |
 | "pricing", "plans", "how much", "cost per hour" | `instance-types` (has pricing) or `cost estimate` |
