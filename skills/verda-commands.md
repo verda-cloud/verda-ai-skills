@@ -8,6 +8,19 @@ description: Verda CLI command reference — use alongside verda-cloud skill for
 All commands support `-o json` for structured output. Use `--agent` flag for non-interactive mode.
 Run `verda <command> --help` for complete flag details.
 
+## Command Names — Use Exactly As Written
+
+Commands use hyphens, not camelCase. Common mistakes:
+
+| WRONG | CORRECT |
+|-------|---------|
+| `sshkey`, `ssh_key` | `ssh-key` |
+| `startupscript`, `startup_script` | `startup-script` |
+| `instancetypes`, `instance_types` | `instance-types` |
+| `images list` | `images` (no subcommand) |
+| `vm plans` | `vm availability` |
+| `-o json` missing | **ALWAYS** include `--agent -o json` |
+
 ## Auth
 
 | Command | Purpose |
