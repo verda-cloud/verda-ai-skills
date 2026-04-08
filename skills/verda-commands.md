@@ -14,12 +14,26 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 
 | User says | CLI command |
 |-----------|------------|
-| "ssh key", "sshkey", "SSH keys", "my keys" | `ssh-key` |
-| "startup script", "init script", "boot script" | `startup-script` |
-| "instance types", "GPU types", "machine types" | `instance-types` |
-| "images", "OS", "operating system" | `images` (NOT `images list`) with `--type` (NOT `--instance-type`) |
+| "deploy", "create VM", "spin up", "launch" | `vm create` |
+| "my VMs", "list instances", "running machines" | `vm list` |
+| "VM info", "describe instance", "show VM" | `vm describe <id>` |
+| "start", "boot", "power on" | `vm start <id>` |
+| "stop", "shut down", "power off" | `vm shutdown <id>` (alias: `vm stop`) |
+| "hibernate", "suspend", "sleep" | `vm hibernate <id>` |
+| "delete VM", "remove VM", "destroy" | `vm delete <id>` (alias: `vm rm`) |
 | "what's available", "stock", "capacity" | `availability` or `vm availability` |
-| "pricing", "plans", "how much" | `instance-types` (has pricing) or `cost estimate` |
+| "instance types", "GPU types", "machine types", "specs" | `instance-types` |
+| "pricing", "plans", "how much", "cost per hour" | `instance-types` (has pricing) or `cost estimate` |
+| "images", "OS", "operating system", "Ubuntu", "CUDA" | `images` (NOT `images list`) with `--type` (NOT `--instance-type`) |
+| "locations", "regions", "datacenters", "where" | `locations` |
+| "ssh key", "sshkey", "SSH keys", "my keys", "public key" | `ssh-key` |
+| "startup script", "init script", "boot script", "user data" | `startup-script` |
+| "volume", "disk", "storage", "block storage" | `volume` |
+| "balance", "credits", "funds", "account" | `cost balance` |
+| "running costs", "burn rate", "spending" | `cost running` |
+| "estimate", "how much will it cost" | `cost estimate` |
+| "connect", "SSH in", "log in", "remote access" | `ssh <hostname-or-id>` |
+| "login", "authenticate", "credentials" | `auth login` (user runs manually) |
 
 ## Auth
 
