@@ -22,7 +22,7 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 | "hibernate", "suspend", "sleep" | `vm hibernate <id>` |
 | "delete VM", "delete instance", "remove", "destroy", "terminate" | `vm delete <id>` (alias: `vm rm`) |
 | "what's available", "stock", "capacity" | `availability` or `vm availability` |
-| "instance types", "GPU types", "machine types", "specs" | `instance-types` |
+| "instance types", "GPU types", "CPU types", "machine types", "specs", "flavors" | `instance-types` |
 | "pricing", "plans", "how much", "cost per hour" | `instance-types` (has pricing) or `cost estimate` |
 | "images", "OS", "operating system", "Ubuntu", "CUDA" | `images` (NOT `images list`) with `--type` (NOT `--instance-type`) |
 | "locations", "regions", "datacenters", "where" | `locations` |
