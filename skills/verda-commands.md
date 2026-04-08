@@ -63,6 +63,7 @@ Users say things informally. Always translate to the correct hyphenated CLI comm
 | `--contract` | string | `PAY_AS_YOU_GO` | `PAY_AS_YOU_GO`, `SPOT`, `LONG_TERM` |
 | `--os-volume-on-spot-discontinue` | string | — | `keep_detached`, `move_to_trash`, `delete_permanently` |
 | `--wait` | bool | true | Wait for VM to be running |
+| `--wait-timeout` | duration | 5m | **Use `2m` for agent mode** — default 5m is too long |
 
 ## VM Lifecycle
 

@@ -96,8 +96,9 @@ Wait for explicit "yes" before creating.
 verda --agent vm create \
   --kind <kind> --instance-type <type> --location <loc> \
   --os <image> --hostname <name> --ssh-key <id> \
-  [--is-spot] [--os-volume-size 50] --wait -o json
+  [--is-spot] [--os-volume-size 50] --wait --wait-timeout 2m -o json
 ```
+If timeout reached, the VM is still provisioning — show what you have and check status with step 10.
 
 ### 10. Verify
 `verda --agent vm describe <id> -o json` — confirm status is running, get IP.
